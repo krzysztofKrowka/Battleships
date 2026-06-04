@@ -1,7 +1,12 @@
 //
 // Created by Krzysztof on 4.06.2026.
 //
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
 
+// Globalny silnik audio dla uproszczenia
+ma_engine audioEngine;
+bool isAudioInitialized = false;
 #include "Game.h"
 #include <stdexcept>
 #include <time.h>
@@ -213,6 +218,9 @@ void sleep_millis(unsigned int ms)
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 bool Game::playGame() {
+    if (ma_engine_init(NULL, &audioEngine) == MA_SUCCESS) {
+        isAudioInitialized = true;
+    }
     int shipLenghts[7] = {5,4,3,2,2,1,1};
     int i = 0;
     srand(time(NULL));
@@ -278,10 +286,12 @@ bool Game::playGame() {
         if (ship) {
             playerHitCount++;
             printGame();
+            if (isAudioInitialized) ma_engine_play_sound(&audioEngine, "explosion.wav", NULL);
             std::cout<<"Trafiony!"<<endl;
         }
         else {
             printGame();
+            if (isAudioInitialized) ma_engine_play_sound(&audioEngine, "splash.wav", NULL);
             std::cout<<"Pudło"<<endl;
         }
         if (playerHitCount==20) {
@@ -294,10 +304,12 @@ bool Game::playGame() {
         if (ship) {
             enemyHitCount++;
             printGame();
+            if (isAudioInitialized) ma_engine_play_sound(&audioEngine, "explosion.wav", NULL);
             std::cout<<"Trafiony!"<<endl;
         }
         else {
             printGame();
+            if (isAudioInitialized) ma_engine_play_sound(&audioEngine, "splash.wav", NULL);
             std::cout<<"Pudło"<<endl;
         }
 
@@ -306,6 +318,9 @@ bool Game::playGame() {
         }
     }
     printGame();
+    if (isAudioInitialized) {
+        ma_engine_uninit(&audioEngine);
+    }
     if (playerHitCount==20) {
         std::cout<<"Wygrana!"<<endl;
         return true;

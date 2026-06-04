@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "Game.h"
 void printHelp() {
     std::cout << "=================== GRA W STATKI ===================\n";

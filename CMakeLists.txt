@@ -7,4 +7,6 @@ add_executable(Battleships main.cpp
         Game.cpp
         Game.h
         Tile.cpp
-        Tile.h)
+        Tile.h
+        miniaudio.h)
+target_link_libraries(Battleships PRIVATE winmm ole32)
